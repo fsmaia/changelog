@@ -76,12 +76,12 @@ func (v *Version) SlackString() string {
 func (v *Version) HistoryString() string {
 	out := ""
 	if len(v.History) > 0 {
-		out += join(v.History, "\n", "String") + "\n\n"
+		out += "\n\n" + join(v.History, "\n", "String")
 	}
 	if len(v.Subsections) > 0 {
-		out += join(v.Subsections, "\n\n", "String")
+		out += "\n\n" + join(v.Subsections, "\n\n", "String")
 	}
-	return out
+	return strings.TrimPrefix(out, "\n\n")
 }
 
 // HistorySlackString returns the Slack Block Kit markdown representation for the
@@ -89,12 +89,12 @@ func (v *Version) HistoryString() string {
 func (v *Version) HistorySlackString() string {
 	out := ""
 	if len(v.History) > 0 {
-		out += join(v.History, "\n", "SlackString") + "\n\n"
+		out += "\n\n" + join(v.History, "\n", "SlackString")
 	}
 	if len(v.Subsections) > 0 {
-		out += join(v.Subsections, "\n\n", "SlackString")
+		out += "\n\n" + join(v.Subsections, "\n\n", "SlackString")
 	}
-	return out
+	return strings.TrimPrefix(out, "\n\n")
 }
 
 // Subsection contains the data for a given subsection.
