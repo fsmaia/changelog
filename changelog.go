@@ -89,10 +89,10 @@ func (v *Version) HistoryString() string {
 func (v *Version) HistorySlackString() string {
 	out := ""
 	if len(v.History) > 0 {
-		out += "\n\n" + join(v.History, "\n", "SlackString")
+		out += join(v.History, "\n", "SlackString") + "\n\n"
 	}
 	if len(v.Subsections) > 0 {
-		out += "\n\n" + join(v.Subsections, "\n\n", "SlackString")
+		out += join(v.Subsections, "\n\n", "SlackString")
 	}
 	return out
 }
