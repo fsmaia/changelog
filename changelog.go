@@ -92,16 +92,16 @@ type ChangeLine struct {
 }
 
 // String returns the markdown representation of the ChangeLine.
-// E.g. "  * Added documentation. (#123)"
+// E.g. "- Added documentation. (#123)"
 func (l *ChangeLine) String() string {
 	if l.Reference == "" {
 		return fmt.Sprintf(
-			"  * %s",
+			"- %s",
 			l.Summary,
 		)
 	}
 	return fmt.Sprintf(
-		"  * %s (%s)",
+		"- %s (%s)",
 		l.Summary,
 		l.Reference,
 	)
