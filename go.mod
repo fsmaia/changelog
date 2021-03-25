@@ -1,4 +1,4 @@
-module github.com/parkr/changelog
+module github.com/fsmaia/changelog
 
 go 1.14
 
