@@ -9,6 +9,7 @@ import (
 )
 
 var (
+	versionAnchorRegexp     = regexp.MustCompile(`<a.*name="(HEAD|v?\d+\.\d+(?:\.\d+)?)\]?"`)
 	versionRegexp           = regexp.MustCompile(`##? (?i:\[?(HEAD|v?\d+\.\d+(?:\.\d+)?)\]?)(?U:.*)(\d{4}-\d{2}-\d{2})?.?$`)
 	subheaderRegexp         = regexp.MustCompile(`### ([0-9A-Za-z_ ]+)`)
 	changeLineRegexp        = regexp.MustCompile(`[\*|\-] (.+)`)
@@ -102,7 +103,7 @@ func parseChangelog(file io.Reader, history *Changelog) error {
 				history.AddLineToSubsection(currentHeader, currentSubHeader, line)
 			}
 			continue
-		} else {
+		} else if _, ok := matchLine(versionAnchorRegexp, txt); !ok {
 			if strings.TrimSpace(txt) != "" && currentLine != nil {
 				currentLine.Summary += " " + strings.TrimSpace(txt)
 			}
