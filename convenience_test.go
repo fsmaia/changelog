@@ -1,7 +1,10 @@
 package changelog
 
-import "testing"
-import "github.com/stretchr/testify/assert"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestNewVersion(t *testing.T) {
 	versionName := "HEAD"
@@ -117,7 +120,7 @@ func TestAddLineToVersion(t *testing.T) {
 
 	c := NewChangelog()
 	c.AddLineToVersion(versionNum, &line)
-	assert.Equal(t, "## HEAD\n\n  * Added a fun method. (#23)\n", c.String())
+	assert.Equal(t, "## HEAD\n\n- Added a fun method. (#23)\n", c.String())
 }
 
 func TestAddLineToSubsection(t *testing.T) {
@@ -127,5 +130,5 @@ func TestAddLineToSubsection(t *testing.T) {
 
 	c := NewChangelog()
 	c.AddLineToSubsection(versionNum, subsectionName, &line)
-	assert.Equal(t, "## HEAD\n\n### Bug Fixes\n\n  * Added a fun method. (#23)\n", c.String())
+	assert.Equal(t, "## HEAD\n\n### Bug Fixes\n\n- Added a fun method. (#23)\n", c.String())
 }
