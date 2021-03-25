@@ -66,7 +66,7 @@ type Subsection struct {
 func (s *Subsection) String() string {
 	if len(s.History) > 0 {
 		return fmt.Sprintf(
-			"### %s\n\n%s",
+			"*%s*\n\n%s",
 			s.Name,
 			join(s.History, "\n"),
 		)
