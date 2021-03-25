@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/parkr/changelog"
+	"github.com/fsmaia/changelog"
 )
 
 func main() {
