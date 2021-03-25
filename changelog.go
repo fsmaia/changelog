@@ -17,7 +17,12 @@ type Changelog struct {
 
 // A Markdown string representation of the Changelog.
 func (c *Changelog) String() string {
-	return join(c.Versions, "\n\n") + "\n"
+	return join(c.Versions, "\n\n", "String") + "\n"
+}
+
+// A Slack Block Kit Markdown string representation of the Changelog
+func (c *Changelog) SlackString() string {
+	return join(c.Versions, "\n\n", "SlackString") + "\n"
 }
 
 // Version contains the data for the changes for a given version. It can
@@ -43,10 +48,51 @@ func (v *Version) String() string {
 		out += " / " + v.Date
 	}
 	if len(v.History) > 0 {
-		out += "\n\n" + join(v.History, "\n")
+		out += "\n\n" + join(v.History, "\n", "String")
 	}
 	if len(v.Subsections) > 0 {
-		out += "\n\n" + join(v.Subsections, "\n\n")
+		out += "\n\n" + join(v.Subsections, "\n\n", "String")
+	}
+	return out
+}
+
+// SlackString returns the Slack Block Kit markdown representation for the version.
+func (v *Version) SlackString() string {
+	out := fmt.Sprintf("*%s*", v.Version)
+	if v.Date != "" {
+		out += " / " + v.Date
+	}
+	if len(v.History) > 0 {
+		out += "\n\n" + join(v.History, "\n", "SlackString")
+	}
+	if len(v.Subsections) > 0 {
+		out += "\n\n" + join(v.Subsections, "\n\n", "SlackString")
+	}
+	return out
+}
+
+// HistoryString returns the markdown representation for the version history
+// (including subsections).
+func (v *Version) HistoryString() string {
+	out := ""
+	if len(v.History) > 0 {
+		out += "\n\n" + join(v.History, "\n", "String")
+	}
+	if len(v.Subsections) > 0 {
+		out += "\n\n" + join(v.Subsections, "\n\n", "String")
+	}
+	return out
+}
+
+// HistorySlackString returns the Slack Block Kit markdown representation for the
+// version history (including subsections).
+func (v *Version) HistorySlackString() string {
+	out := ""
+	if len(v.History) > 0 {
+		out += "\n\n" + join(v.History, "\n", "SlackString")
+	}
+	if len(v.Subsections) > 0 {
+		out += "\n\n" + join(v.Subsections, "\n\n", "SlackString")
 	}
 	return out
 }
@@ -66,9 +112,21 @@ type Subsection struct {
 func (s *Subsection) String() string {
 	if len(s.History) > 0 {
 		return fmt.Sprintf(
+			"### %s\n\n%s",
+			s.Name,
+			join(s.History, "\n", "String"),
+		)
+	}
+	return ""
+}
+
+// SlackString returns the Slack Block Kit markdown representation of the subsection.
+func (s *Subsection) SlackString() string {
+	if len(s.History) > 0 {
+		return fmt.Sprintf(
 			"*%s*\n\n%s",
 			s.Name,
-			join(s.History, "\n"),
+			join(s.History, "\n", "SlackString"),
 		)
 	}
 	return ""
@@ -107,9 +165,25 @@ func (l *ChangeLine) String() string {
 	)
 }
 
-// join calls the .String() function of each element in the slice it's
+// SlackString returns the Slack Block Kit markdown representation of the ChangeLine.
+// E.g. "• Added documentation. (#123)"
+func (l *ChangeLine) SlackString() string {
+	if l.Reference == "" {
+		return fmt.Sprintf(
+			"• %s",
+			l.Summary,
+		)
+	}
+	return fmt.Sprintf(
+		"• %s (%s)",
+		l.Summary,
+		l.Reference,
+	)
+}
+
+// join calls the .[method]() function of each element in the slice it's
 // passed, then joins those strings by the given separator.
-func join(lines interface{}, sep string) string {
+func join(lines interface{}, sep string, method string) string {
 	s := reflect.ValueOf(lines)
 	if s.Kind() != reflect.Slice {
 		panic("join given a non-slice type")
@@ -117,7 +191,7 @@ func join(lines interface{}, sep string) string {
 
 	ret := make([]string, s.Len())
 	for i := 0; i < s.Len(); i++ {
-		vals := s.Index(i).MethodByName("String").Call(nil)
+		vals := s.Index(i).MethodByName(method).Call(nil)
 		ret[i] = vals[0].String()
 	}
 
